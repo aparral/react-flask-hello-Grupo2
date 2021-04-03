@@ -33,7 +33,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				experiencia: "",
 				portafolio: "",
 				merit: ""
-			},
+            },
+            userId:[],
 			userAll: [],
 			favoritos: [],
 			serviceInfo: [],
@@ -106,7 +107,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					const json = await response.json();
 					console.log("--User--", json);
-					setStore({ user: JSON.stringify(json) });
+					setStore({ userId: json });
 				} catch (error) {
 					console.log("Error loading message from backend", error);
 				}
@@ -150,7 +151,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
-							id_user: store.user.id,
+							id_user: store.userId.id,
 							id_servicio_registrados: "1",
 							name_servicio: "name_servicio_front"
 						})
