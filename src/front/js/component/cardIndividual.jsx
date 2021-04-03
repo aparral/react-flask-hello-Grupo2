@@ -8,7 +8,7 @@ import { Context } from "../store/appContext";
 
 export const CardIndividual = props => {
 	const { store, actions } = useContext(Context);
-	const { id } = 1;
+	//const { id } = 1;
 
 	// useEffect(() => {
 	// 	actions.getServiceInfoById(id);
@@ -22,7 +22,7 @@ export const CardIndividual = props => {
 					className="favorito"
 					onClick={() =>
 						actions.addUserFavorites({
-							id_user: store.user.id,
+							id_user: 1,
 							id_servicio_registrado: 1,
 							name_servicio: "crea tu mobil-app"
 						})
