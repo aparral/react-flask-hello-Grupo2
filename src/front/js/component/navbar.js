@@ -4,11 +4,11 @@ import { Button, Form, FormControl, Navbar, Nav, Col, Container } from "react-bo
 import { logoAzul } from "../../img/image";
 import { LoginModal } from "./Login";
 import PropTypes from "prop-types";
+import SearchBar from "./searchbar.jsx";
 import { Context } from "../store/appContext";
 
 const MyNavbar = props => {
 	const { store, actions } = useContext(Context);
-	console.log(store.user);
 	useEffect(() => {
 		actions.getToken();
 	}, []);
@@ -24,7 +24,7 @@ const MyNavbar = props => {
 			<>
 				<nav className="navbar navbar-light my-3">
 					<Container>
-						<Col md={5}>
+						<Col sm={3} md={3} lg={3} xl={4}>
 							<Link to="/home">
 								<img
 									src={logoAzul}
@@ -35,16 +35,11 @@ const MyNavbar = props => {
 								/>
 							</Link>
 						</Col>
-						<Col sm={6} md={4} className="hidden-sm">
-							<Form inline className="Buscar sb d-flex float-right mt-2 hidden-sm">
-								<FormControl type="text" placeholder="Buscar" className="mr-sm-4 search" />
-								<Button variant="btn" onChange={event => props.handledChange(event)}>
-									<i className="fas fa-search pr-3" />
-								</Button>
-							</Form>
+						<Col sm={3} md={4} lg={5} xl={5}>
+							<SearchBar />
 						</Col>
-						<Col sm={6} md={3}>
-							<div className="ml-auto">
+						<Col sm={6} md={5} lg={4} xl={3} className="px-0">
+							<div>
 								<LoginModal user={store.user} />
 							</div>
 						</Col>

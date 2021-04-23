@@ -6,36 +6,27 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const CardIndividual = props => {
+export const CardMiCompra = props => {
 	const { store, actions } = useContext(Context);
-	const { id } = props;
+	const { id, idcompra } = props;
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		actions.addUserFavorites({
-			id_user: JSON.parse(JSON.stringify(store.user.id)),
-			id_servicio_registrados: props.id,
-			name_servicio: props.name_servicio
-		});
-		console.log("Agregardo el favorito");
 	};
 
 	useEffect(() => {
-		actions.getServiceInfoById(id);
+		actions.get_servicioCompra_id_user(id);
 	}, []);
 
 	return (
 		<div>
-			<Card md={3} className="card">
-				<Button variant="btn" className="favorito" onClick={e => handleSubmit(e)}>
-					<i className="far fa-heart" />
-				</Button>
-				<Link to={"/servicio/category/" + id}>
+			<Card>
+				<Link to={"/MiCompra/" + idcompra + "/category/" + id}>
 					<img
 						src={props.img}
 						className="card-img-top caimg"
 						alt="image"
-						onClick={() => actions.getServiceInfoById(id)}
+						onClick={() => actions.get_servicioCompra_id_user(id)}
 					/>
 				</Link>
 				<Card.Body className="text-dark">
@@ -48,7 +39,6 @@ export const CardIndividual = props => {
 					</Card.Text>
 					<Card.Text className="d-inline" style={{ marginBottom: "3px", fontSize: "14px", color: "#606060" }}>
 						<i className="fas fa-star warning" style={{ color: "#f3cb00" }} />
-						{props.punta} / {props.trabajo} trabajo
 					</Card.Text>
 				</Card.Body>
 			</Card>
@@ -56,7 +46,7 @@ export const CardIndividual = props => {
 	);
 };
 
-CardIndividual.propTypes = {
+CardMiCompra.propTypes = {
 	img: PropTypes.string,
 	name_servicio: PropTypes.string,
 	punta: PropTypes.string,
@@ -64,5 +54,6 @@ CardIndividual.propTypes = {
 	trabajo: PropTypes.string,
 	tipo_cobro: PropTypes.string,
 	match: PropTypes.object,
-	id: PropTypes.number
+	id: PropTypes.number,
+	idcompra: PropTypes.number
 };
