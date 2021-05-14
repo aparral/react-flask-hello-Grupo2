@@ -101,7 +101,7 @@ class Servicio_registrados(db.Model):
     def get_servicio_by_category(_category):
         servicio_category = Servicio_registrados.query.filter_by(category=_category).all()
         return list(map(lambda x: x.serialize(), servicio_category))
-    def update_servicio(id,_tipo_membresia, _subcategory, _tipo_cobro, _valor, _name_servicio, _descrip_servicio, _duracion, _revision, _proceso, _experiencia, _portafolio,_portafolioFoto, _merit):
+    def update_servicio(id,_tipo_membresia, _subcategory, _tipo_cobro, _valor, _name_servicio, _descrip_servicio, _duracion, _revision, _proceso, _experiencia, _portafolio, _merit):
         servicio_update = Servicio_registrados.query.get(id)
         servicio_update.tipo_membresia = _tipo_membresia 
         servicio_update.subcategory = _subcategory
@@ -114,7 +114,6 @@ class Servicio_registrados(db.Model):
         servicio_update.proceso = _proceso 
         servicio_update.experiencia = _experiencia 
         servicio_update.portafolio = _portafolio 
-        servicio_update.portafolioFoto = _portafolioFoto
         servicio_update.merit = _merit
         db.session.commit()
     def delete_servicio(id):
@@ -132,10 +131,11 @@ class Servicios_prestados(db.Model):
     id_servicio_registrados = db.Column(db.Integer, db.ForeignKey('servicio_registrados.id'), nullable=False)
     cantidad_servicio = db.Column(db.Integer,nullable=False)
     total_valor_servicio = db.Column(db.Integer,nullable=False)
+    name_servicio = db.Column(db.String(50))
     fecha_inicio = db.Column(db.DateTime)
     fecha_termino = db.Column(db.DateTime)
     comentarios = db.relationship('Comentarios', backref='servicios_prestados',lazy=True)
-
+    
     def __repr__(self):
         return "<Servicios_prestados %r>" % self.id
     def serialize(self):
@@ -143,15 +143,23 @@ class Servicios_prestados(db.Model):
             "id": self.id,
             "id_user_compra": self.user.id,
             "id_servicio_registrados": self.servicio_registrados.id,
-            "name_servicio": self.servicio_registrados.name_servicio,
+            "name_servicio": self.name_servicio,
             "cantidad_servicio": self.cantidad_servicio,
             "total_valor_servicio":self.total_valor_servicio,
             "fecha_inicio": self.fecha_inicio,
             "fecha_termino": self.fecha_termino
         }
+
     def get_servicioCompra_id_user(id):
         servicioCompra = Servicios_prestados.query.filter_by(id_user_compra=id).all()
         return list(map(lambda x: x.serialize(), servicioCompra))
+    def get_Compra_id_servicio(id):
+        CompraByService =Servicios_prestados.query.filter_by(id_servicio_registrados=id).all()
+        return list(map(lambda x: x.serialize(), CompraByService))
+    def get_all_compra():
+        allCompra = Servicios_prestados.query.all()
+        db.session.commit()
+        return list(map(lambda x: x.serialize(), Servicios_prestados.query.all()))
 
 class Favoritos(db.Model):
     __tablename__ = 'favoritos'
@@ -198,11 +206,13 @@ class Comentarios(db.Model):
             "text_comment":self.text_comment,
             "evaluacion": self.evaluacion
         }
-    def get_all_comentarios(id):
+    def get_comentarios(id):
         # comentarios_query = Comentarios.query.all()
         # comentarios_query = Comentarios.query.filter_by(id=_id_servicios_prestados).all()
-        return list(map(lambda x: x.serialize(), Comentarios.query.all()))
+        ComentarioByService = Comentarios.query.filter_by(id_servicio_registrados=id).all()
+        return list(map(lambda x: x.serialize(), ComentarioByService))
   
+
 class Document(db.Model):
     __tablename__ = 'document'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
