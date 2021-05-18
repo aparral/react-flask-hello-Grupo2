@@ -13,7 +13,16 @@ import { PasswordRecovery } from "./component/PasswordRecovery";
 import { PasswordRecovery2 } from "./component/PasswordRecovery2";
 import Register from "./pages/register";
 import RegisterService from "./pages/registerService";
+import MiServicio from "./pages/MiServicio";
+import MiCompra from "./pages/MiCompra";
+import MiServicioId from "./pages/MiServicioId";
+import MiDato from "./pages/MiDato";
+import Admin from "./pages/Admin";
+import LoginAdmin from "./pages/loginAdmin";
 import { GraciasCompra } from "./pages/GraciasCompra";
+import ServicioindividualComments from "./pages/servicio-Individual-comment";
+import MyScrollUpButton from "./component/ScrollupButton";
+import { ServiceEmpresa } from "./pages/servicioEmpresa";
 
 //create your first component
 const Layout = () => {
@@ -26,6 +35,7 @@ const Layout = () => {
 			<BrowserRouter basename={basename}>
 				<MyNavbar />
 				<ScrollToTop>
+					<MyScrollUpButton />
 					<Switch>
 						<Route exact path="/">
 							<Landingpage />
@@ -33,15 +43,20 @@ const Layout = () => {
 						<Route exact path="/home">
 							<Home />
 						</Route>
-						{/* <Route exact path="/category">
-							<ServicioCategory />
-						</Route> */}
-						<Route exact path="/servicio/:category" component={ServicioCategory} />
-						{/* <Route exact path="/category/:id">
-							<Servicioindividual />
-						</Route> */}
 						<Route exact path="/servicio/category/:id" component={Servicioindividual} />
-
+						<Route exact path="/servicio/:category" component={ServicioCategory} />
+						<Route exact path="/MiServicio" component={MiServicio} />
+						<Route exact path="/MiServicio/id/:id" component={MiServicioId} />
+						<Route exact path="/MiDato" component={MiDato} />
+						<Route exact path="/MiCompra/id/:id" component={ServicioindividualComments} />
+						{/* <Route
+							exact
+							path="/MiCompra/:idcompra/category/:idcategory"
+							component={ServicioindividualComments}
+						/> */}
+						<Route exact path="/MiCompra">
+							<MiCompra />
+						</Route>
 						<Route exact path="/passwordrecovery">
 							<PasswordRecovery />
 						</Route>
@@ -54,8 +69,20 @@ const Layout = () => {
 						<Route exact path="/registerservice">
 							<RegisterService />
 						</Route>
+						<Route exact path="/service-empresa">
+							<ServiceEmpresa />
+						</Route>
 						<Route exact path="/compra">
 							<GraciasCompra />
+						</Route>
+						<Route exact path="/MiEvaluacion">
+							<MiCompra />
+						</Route>
+						<Route exact path="/login-admin">
+							<LoginAdmin />
+						</Route>
+						<Route exact path="/Admin">
+							<Admin />
 						</Route>
 						<Route>
 							<h1>Not found!</h1>

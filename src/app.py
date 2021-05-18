@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
-from flask_migrate import Migrate
+from flask_migrate import Migrate, MigrateCommand
 from flask_swagger import swagger
 from flask_cors import CORS
 from api.utils import APIException, generate_sitemap
@@ -11,10 +11,11 @@ from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity 
+from flask_script import Manager
 #from models import Person
 
 ENV = os.getenv("FLASK_ENV")
-static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
+static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 jwt = JWTManager(app)
@@ -26,21 +27,10 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 MIGRATE = Migrate(app, db)
 db.init_app(app)
-
-# ALLOW_IMG_EXTENSION = {'png', 'jpg', 'jpeg', 'gif'}
-# ALLOW_FILE_EXTENSION = {'pdf', 'doc', 'docx'}
-
-# app = Flask(__name__)
-# #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(BASEDIR, "test.db")
-# app.config["DEBUG"] = True
-# app.config["ENV"] = "development"
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.config["SECRET_KEY"] = "secret-key"
-# app.config['JWT_SECRET_KEY'] = 'encrypt'
-# app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
-
 
 # Allow CORS requests to this API
 CORS(app)
@@ -71,6 +61,17 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0 # avoid cache memory
     return response
+
+@app.route('/upload/<filetype>/<filename>', methods=["GET"])
+def file(filetype, filename):
+    print(app.config['UPLOAD_FOLDER'])
+    if filetype == "user" :
+        return send_from_directory("./"+app.config['UPLOAD_FOLDER']+"/userpic", filename)
+    if filetype == "servicio" :
+        #ruta = os.path.join("static/serviciopic", filename)
+        return send_from_directory("../src/static/serviciopic/", filename)
+
+    return jsonify({"msg":"file no found"}), 404
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

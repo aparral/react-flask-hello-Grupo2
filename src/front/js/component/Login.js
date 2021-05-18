@@ -2,11 +2,16 @@ import React, { useState, useContext, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { NavDropdown, Dropdown, Row } from "react-bootstrap";
+import { GoogleLogin } from "react-google-login";
 import PropTypes from "prop-types";
 // import useUserSession from "./userSession";
+
+// const responseGoogle = (response) => {
+//   console.log(response);
+// }
 
 function MyVerticallyCenteredModal(props) {
 	const { store, actions } = useContext(Context);
@@ -28,7 +33,7 @@ function MyVerticallyCenteredModal(props) {
 				<Modal.Title id="contained-modal-title-vcenter">Inicia Sesión</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				{store.user.token !== null ? (
+				{store.user.isLogin ? (
 					<div className="text-center mt-3 mb-5">
 						{/* <span>User: {JSON.stringify(store.user)}</span> */}
 						La sesión ha sido iniciada
@@ -81,6 +86,16 @@ function MyVerticallyCenteredModal(props) {
 								<p> Recuperala aquí </p>
 							</Link>
 						</Form.Text>
+
+						{/* <hr/>
+
+                        <GoogleLogin
+                        clientId=""
+                        buttonText="Login"
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        cookiePolicy={'single_host_origin'}
+                    /> */}
 					</Form>
 				)}
 			</Modal.Body>
@@ -90,7 +105,9 @@ function MyVerticallyCenteredModal(props) {
 
 export function LoginModal(props) {
 	const [modalShow, setModalShow] = React.useState(false);
+	const history = useHistory();
 	const { store, actions } = useContext(Context);
+	const [width, setWidth] = React.useState(window.innerWidth);
 
 	useEffect(() => {
 		actions.showUserFavorites();
@@ -98,15 +115,49 @@ export function LoginModal(props) {
 
 	return (
 		<>
-			{store.user.token !== null ? (
+			{store.user.isLogin ? (
 				<>
-					<NavDropdown title="Mi favoritos" id="basic-nav-dropdown" className="float-left">
-						<NavDropdown.Item href="#action/3.1" style={{ width: "250px" }}>
-							{JSON.stringify(store.favoritos.id)}
+					<NavDropdown
+						//{ width > 590 ? title="Mi cuenta" : title=<i class="far fa-user-circle"></i>}
+						title="Mi cuenta"
+						id="basic-nav-dropdown"
+						className="float-right px-0"
+						style={{ paddingRight: "0px" }}>
+						<NavDropdown.Item as={Link} to="/MiDato">
+							Mis datos
 						</NavDropdown.Item>
+						<NavDropdown.Item as={Link} to="/MiCompra">
+							Mis Compras
+						</NavDropdown.Item>
+						<NavDropdown.Item as={Link} to="/registerservice">
+							Registrar servicio
+						</NavDropdown.Item>
+						<NavDropdown.Divider />
+						<NavDropdown.Item
+							onClick={() => {
+								actions.cerrarSesion(history);
+								actions.getToken();
+								setModalShow(false);
+							}}>
+							Salir
+						</NavDropdown.Item>
+					</NavDropdown>
+					<NavDropdown title="Mi favoritos" id="basic-nav-dropdown" className="float-right mr-2">
+						{/* <NavDropdown.Item href="#action/3.1" style={{ width: "250px", paddingRight: "0px" }}>
+							{JSON.stringify(store.favoritos.id)}
+						</NavDropdown.Item> */}
+						{store.favoritos.length === 0 ? (
+							<NavDropdown.Item style={{ width: "250px" }}> No hay favorito</NavDropdown.Item>
+						) : (
+							" "
+						)}
 						{store.favoritos.map((item, index) => {
 							return (
-								<NavDropdown.Item href="#action/3.1" style={{ width: "250px" }} key={index}>
+								<NavDropdown.Item
+									as={Link}
+									to={"/servicio/category/" + item.id_servicio_registrados}
+									style={{ width: "250px" }}
+									key={index}>
 									{item.name_servicio}
 									<Button
 										variant="light"
@@ -118,36 +169,22 @@ export function LoginModal(props) {
 							);
 						})}
 					</NavDropdown>
-					<NavDropdown title="Mi cuenta" id="basic-nav-dropdown" className="float-right">
-						<NavDropdown.Item href="#action/3.1">Mis datos</NavDropdown.Item>
-						<NavDropdown.Item href="#action/3.2">Compra</NavDropdown.Item>
-						<NavDropdown.Item href="/registerservice">Vender</NavDropdown.Item>
-						<NavDropdown.Divider />
-						<NavDropdown.Item
-							onClick={() => {
-								actions.cerrarSesion();
-								actions.getToken();
-								setModalShow(false);
-							}}>
-							Salir
-						</NavDropdown.Item>
-					</NavDropdown>
 				</>
 			) : (
 				<>
-					<Button
-						variant="outline-primary "
-						className="no-outline mr-2"
-						style={{ borderRadius: "1.75rem" }}
-						onClick={() => setModalShow(true)}>
-						Ingresa
-					</Button>
-					<MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} />
 					<Link to="/register">
 						<button className="btn btn-primary float-right" style={{ borderRadius: "1.75rem" }}>
 							&nbsp;&nbsp;&nbsp;Registrate&nbsp;&nbsp;&nbsp;
 						</button>
 					</Link>
+					<Button
+						variant="outline-primary "
+						className="no-outline float-right mr-2"
+						style={{ borderRadius: "1.75rem" }}
+						onClick={() => setModalShow(true)}>
+						Ingresa
+					</Button>
+					<MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} />
 				</>
 			)}
 		</>
