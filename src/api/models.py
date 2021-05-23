@@ -38,9 +38,7 @@ class User(db.Model):
         user_to_update.password = _password if _password is not None else user_to_update.password
         db.session.commit()
 
-
 # servicio_registrados = Servicio_registrados()
-
 # 
 #     servicio_registrados.category = category,
 #     servicio_registrados.subcategory = subcategory,
@@ -147,7 +145,7 @@ class Servicios_prestados(db.Model):
     id_user_compra = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     id_servicio_registrados = db.Column(db.Integer, db.ForeignKey('servicio_registrados.id'), nullable=False)
     cantidad_servicio = db.Column(db.Integer,nullable=False)
-    total_valor_servicio = db.Column(db.Integer,nullable=False)
+    total_valor_servicio = db.Column(db.String(50),nullable=False)
     name_servicio = db.Column(db.String(50))
     fecha_inicio = db.Column(db.DateTime)
     fecha_termino = db.Column(db.DateTime)
@@ -226,9 +224,12 @@ class Comentarios(db.Model):
     def get_comentarios(id):
         # comentarios_query = Comentarios.query.all()
         # comentarios_query = Comentarios.query.filter_by(id=_id_servicios_prestados).all()
-        ComentarioByService = Comentarios.query.filter_by(id_servicio_registrados=id).all()
-        return list(map(lambda x: x.serialize(), ComentarioByService))
-  
+        return list(map(lambda x: x.serialize(), Comentarios.query.all()))
+
+    def get_comentario_servicioprestado(id_user, id_servicios_prestados, id_servicio_registrados):
+        comment=Comentarios.query.filter_by(id_user_compra=id_user, id_servicios_prestados=id_servicios_prestados, id_servicio_registrados=id_servicio_registrados)
+        if not comment: return False
+        return True
 
 class Document(db.Model):
     __tablename__ = 'document'
